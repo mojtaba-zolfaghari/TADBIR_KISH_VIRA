@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using TADBIR_KISH_VIRA.Data;
 using TADBIR_KISH_VIRA.Repositories;
+using TADBIR_KISH_VIRA.SeedData;
 using TADBIR_KISH_VIRA.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,9 +28,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var dbContext = services.GetRequiredService<ApplicationDbContext>();
+
+    // Seed the CoverageRate data
+    CoverageRateSeedData.Seed(dbContext);
+}
 app.Run();

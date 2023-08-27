@@ -12,5 +12,6 @@ namespace TADBIR_KISH_VIRA.Data
         }
 
         public DbSet<CoverageRate> CoverageRates { get; set; }
+        public DbSet<InsuranceResponse> InsuranceResponses { get; set; }
     }
 }
