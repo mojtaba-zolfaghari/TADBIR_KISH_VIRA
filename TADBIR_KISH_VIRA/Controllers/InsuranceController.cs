@@ -10,31 +10,46 @@ namespace TADBIR_KISH_VIRA.Controllers
     [ApiController]
     public class InsuranceController : ControllerBase
     {
+        private readonly ILogger<InsuranceController> _logger;
         private readonly IInsuranceCalculatorService _insuranceCalculatorService;
         private readonly IInsuranceRequestRepository _insuranceRequestRepository;
 
-        public InsuranceController(IInsuranceCalculatorService insuranceCalculatorService, IInsuranceRequestRepository insuranceRequestRepository)
+        public InsuranceController(IInsuranceCalculatorService insuranceCalculatorService, IInsuranceRequestRepository insuranceRequestRepository, ILogger<InsuranceController> logger)
         {
             _insuranceCalculatorService = insuranceCalculatorService;
             _insuranceRequestRepository = insuranceRequestRepository;
+            _logger = logger;
         }
 
         [HttpPost("Calculate")]
         public ActionResult<decimal> CalculatePremium([FromBody] InsuranceRequest request)
         {
-            // Add validation logic here if needed
-
-            decimal premium = _insuranceCalculatorService.CalculatePremium(request.CoverageType, request.Capital);
-            InsuranceResponse response = new()
+            try
             {
-                CalculatedPremium = premium,
-                Capital = request.Capital,
-                CoverageType = request.CoverageType,
-                Title = request.Title,
-            };
-            _insuranceRequestRepository.SaveInsuranceRequest(response);
+                // Add validation logic here if needed
+                // Validate input if needed
+                if (request.Capital <= 0)
+                {
+                    return BadRequest("Capital must be a positive value.");
+                }
+                decimal premium = _insuranceCalculatorService.CalculatePremium(request.CoverageType, request.Capital);
+                InsuranceResponse response = new()
+                {
+                    CalculatedPremium = premium,
+                    Capital = request.Capital,
+                    CoverageType = request.CoverageType,
+                    Title = request.Title,
+                };
+                _insuranceRequestRepository.SaveInsuranceRequest(response);
 
-            return Ok(premium);
+                return Ok(premium);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                _logger.LogError(ex, "An error occurred while processing the request.");
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing the request.");
+            }
         }
     }
 }

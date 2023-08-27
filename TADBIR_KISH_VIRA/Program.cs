@@ -18,6 +18,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<ICoverageRateRepository, CoverageRateRepository>();
 builder.Services.AddScoped<IInsuranceCalculatorService, InsuranceCalculatorService>();
+builder.Services.AddScoped<IInsuranceRequestRepository, InsuranceRequestRepository>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,7 +27,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+builder.Services.AddLogging(builder =>
+{
+    builder.AddConsole(); // We can add other logging providers here
+});
 app.UseHttpsRedirection();
 app.UseAuthorization();
 

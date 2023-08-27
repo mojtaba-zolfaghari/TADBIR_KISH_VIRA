@@ -10,11 +10,11 @@ namespace TADBIR_KISH_VIRA.SeedData
             if (!context.CoverageRates.Any())
             {
                 var coverageRates = new List<CoverageRate>
-            {
-                new CoverageRate { CoverageType = 1, Rate = 0.0052m },
-                new CoverageRate { CoverageType = 2, Rate = 0.0042m },
-                new CoverageRate { CoverageType = 3, Rate = 0.005m }
-            };
+                    {
+                        new CoverageRate { CoverageType = 1, Rate = 0.0052m},
+                        new CoverageRate { CoverageType = 2, Rate = 0.0042m },
+                        new CoverageRate { CoverageType = 3, Rate = 0.005m}
+                    };
 
                 context.CoverageRates.AddRange(coverageRates);
                 context.SaveChanges();
